@@ -1,0 +1,14 @@
+{
+  "environment": {
+    "name": "test",
+    "host": "automationpractice.com",
+    "protocol": "http"
+  },
+  "products": {
+    "t-shirt": {
+      "id": "1",
+      "title": "Faded Short Sleeve T-shirts",
+      "price": "16.51"
+    }
+  }
+}
