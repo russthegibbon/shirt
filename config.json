@@ -4,6 +4,12 @@
     "host": "automationpractice.com",
     "protocol": "http"
   },
+  "categories":[
+    {
+      "name":"T-shirts",
+      "id":"5"
+    }
+  ],
   "products": {
     "t-shirt": {
       "id": "1",
