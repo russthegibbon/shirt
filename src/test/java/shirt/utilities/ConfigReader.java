@@ -18,40 +18,35 @@ public class ConfigReader {
 
     public JSONObject getId(String key) {
         JSONObject jsonObject = new JSONObject();
-        try
-        {
+        try {
             JSONParser parser = new JSONParser();
             Object object = parser.parse(new FileReader(configPath));
             jsonObject = (JSONObject) object;
-        }
-        catch (Exception exception)
-        {
+        } catch (Exception exception) {
             log.fatal(exception.getMessage());
         }
         return (JSONObject) jsonObject.get(key);
     }
 
-    public Integer getId(String type, String key) {
+    public String getId(String type, String key) {
         JSONArray jsonArray = new JSONArray();
-        try
-        {
+        try {
             JSONParser parser = new JSONParser();
             Object object = parser.parse(new FileReader(configPath));
             JSONObject jsonObject = (JSONObject) object;
             jsonArray = (JSONArray) jsonObject.get(type);
-        }
-        catch (Exception exception)
-        {
+        } catch (Exception exception) {
             log.fatal(exception.getMessage());
         }
         for (Integer i = 0; i < jsonArray.size(); i++) {
             // TODO: check for duplicate items in the json.
-            JSONObject category = (JSONObject) jsonArray.get(i);
-            if (category.get("name") == key) {
-                return ((Integer) category.get("id"));
+            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+            if (jsonObject.get("name").equals(key)) {
+                log.debug("Found a matching " + type + " item for " + key + " with ID: " + jsonObject.get("id"));
+                return ((String) jsonObject.get("id"));
             }
         }
         log.fatal("Could not find " + type + " ID for: " + key);
-        return(0);
+        return "";
     }
 }
