@@ -7,6 +7,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.json.simple.JSONObject;
@@ -65,11 +66,10 @@ public class Stepdefs {
 
     @Then("^I should see the order in my order history$")
     public void i_should_see_the_order_in_my_order_history() throws Exception {
-//        OrderHistoryPage orderHistoryPage = new OrderHistoryPage(driver, baseUrl);
+        OrderHistoryPage orderHistoryPage = new OrderHistoryPage(driver, baseUrl);
 //        This step does not need to test navigation, so going directly to the URL will save time.
-//        orderHistoryPage.open();
-//        Assert.assertTrue("Order does not exist in history.", orderHistoryPage.orderExists(orderReference));
-        throw new PendingException();
+        orderHistoryPage.open();
+        Assert.assertTrue(String.format("Order %s does not exist in history.", orderReference), orderHistoryPage.orderExists(orderReference));
     }
 
     @After()
