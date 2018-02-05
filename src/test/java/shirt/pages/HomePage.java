@@ -4,7 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import shirt.utilities.ConfigReader;
 
-public class HomePage extends PageTemplate {
+public class HomePage extends OpenablePage {
     private final String configPath = "config.json";
 
     public HomePage(WebDriver driver, String baseUrl) {

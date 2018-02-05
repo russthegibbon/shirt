@@ -7,16 +7,20 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
+import java.nio.file.Paths;
 
 public class ConfigReader {
     private String configPath;
     private Logger log = LogManager.getLogger("com.peppermintspencer");
 
     public ConfigReader(String configPath) {
+        // TODO: read the data in once, then store it in memory.
         this.configPath = configPath;
     }
 
-    public JSONObject getId(String key) {
+    public JSONObject getValue(String key) {
+        log.debug("Looking for "+ key + " configuration in the json file.");
+        log.debug("Current directory: " + Paths.get(".").toAbsolutePath().normalize().toString());
         JSONObject jsonObject = new JSONObject();
         try {
             JSONParser parser = new JSONParser();

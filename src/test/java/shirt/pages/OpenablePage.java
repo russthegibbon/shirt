@@ -1,17 +1,14 @@
 package shirt.pages;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
-public class PageTemplate {
-    protected WebDriver driver;
+public class OpenablePage extends BasePage {
     protected String baseUrl;
     protected String url;
-    Logger log = LogManager.getLogger("com.peppermintspencer");
 
-    public PageTemplate(WebDriver driver, String baseUrl, String path) {
+    public OpenablePage(WebDriver driver, String baseUrl, String path) {
+        super(driver);
         this.driver = driver;
         this.baseUrl = baseUrl;
         String urlTemplate = "%s/%s";

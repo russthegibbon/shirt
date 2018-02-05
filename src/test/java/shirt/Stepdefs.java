@@ -10,22 +10,24 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.json.simple.JSONObject;
-import shirt.pages.HomePage;
+import shirt.pages.*;
 import org.apache.logging.log4j.LogManager;
-import shirt.pages.ProductCategoryPage;
 import shirt.utilities.ConfigReader;
+
+import java.util.concurrent.TimeUnit;
 
 public class Stepdefs {
     private final WebDriver driver = new ChromeDriver();
-    private String baseUrl = new String();
-    private String orderReference = new String();
+    private String baseUrl;
+    private String orderReference;
+    private final String configPath = "./config.json";
+    private final ConfigReader configReader = new ConfigReader(configPath);
+    private Logger log = LogManager.getLogger("com.peppermintspencer");
 
     @Before()
     public void configure() {
-        Logger log = LogManager.getLogger("com.peppermintspencer");
-        String configPath = "config.json";
-        ConfigReader configReader = new ConfigReader(configPath);
-        JSONObject environment = configReader.getId("environment");
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        JSONObject environment = configReader.getValue("environment");
         String protocol = (String) environment.get("protocol");
         String host = (String) environment.get("host");
         String baseUrlTemplate = "%s://%s";
@@ -42,20 +44,23 @@ public class Stepdefs {
 
     @When("^I order a t-shirt$")
     public void i_order_a_t_shirt() throws Exception {
-        HomePage homePage = new HomePage(driver, baseUrl);
-        ProductCategoryPage tShirtPage = homePage.goToCategory("T-shirts");
-//        tShirtPage.addItemToCart(tShirtId);
-//        CartSummaryPage cartSummaryPage = tShirtPage.proceedToCheckout();
-//        AuthenticationPage authenticationPage = cartSummaryPage.proceedToCheckout();
-//        AddressesPage addressesPage = authenticationPage.signIn(user);
-//        ShippingPage shippingPage = addressesPage.proceedToCheckout();
-//        shippingPage.agreeToTerms();
-//        PaymentPage paymentPage = shippingPage.proceedToCheckout();
-//        OrderSummaryPage orderSummaryPage = paymentPage.payByBankWire();
-//        OrderConfirmationPage orderConfirmationPage = orderSummaryPage.confirmOrder();
-//        orderReference = orderConfirmationPage.orderReference();
-//        log.info("Order reference is: " + orderReference);
-        throw new PendingException();
+        String tShirtId = configReader.getId("products", "T-shirt");
+        ProductPage productPage = new ProductPage(driver, baseUrl, tShirtId);
+        productPage.open();
+        productPage.addToCart();
+        CartSummaryPage cartSummaryPage = productPage.proceedToCheckout();
+        AuthenticationPage authenticationPage = cartSummaryPage.proceedToCheckout();
+        JSONObject user = configReader.getValue("user");
+        String email = (String)user.get("email");
+        String password = (String)user.get("password");
+        AddressesPage addressesPage = authenticationPage.signIn(email, password);
+        ShippingPage shippingPage = addressesPage.proceedToCheckout();
+        shippingPage.agreeToTerms();
+        PaymentPage paymentPage = shippingPage.proceedToCheckout();
+        OrderSummaryPage orderSummaryPage = paymentPage.payByBankWire();
+        OrderConfirmationPage orderConfirmationPage = orderSummaryPage.confirmOrder();
+        orderReference = orderConfirmationPage.orderReference();
+        log.info("Order reference is: " + orderReference);
     }
 
     @Then("^I should see the order in my order history$")

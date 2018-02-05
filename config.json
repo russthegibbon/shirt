@@ -4,17 +4,20 @@
     "host": "automationpractice.com",
     "protocol": "http"
   },
-  "categories":[
+  "user": {
+    "email": "someone@example.com",
+    "password": "Password123"
+  },
+  "categories": [
     {
-      "name":"T-shirts",
-      "id":"5"
+      "name": "T-shirts",
+      "id": "5"
     }
   ],
-  "products": {
-    "t-shirt": {
-      "id": "1",
-      "title": "Faded Short Sleeve T-shirts",
-      "price": "16.51"
+  "products": [
+    {
+      "name": "T-shirt",
+      "id": "1"
     }
-  }
+  ]
 }
