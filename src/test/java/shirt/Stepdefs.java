@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import shirt.pages.*;
 import org.apache.logging.log4j.LogManager;
 import shirt.utilities.ConfigReader;
+import shirt.utilities.User;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +35,6 @@ public class Stepdefs {
         String baseUrlTemplate = "%s://%s";
         baseUrl = String.format(baseUrlTemplate, protocol, host);
         log.info("Base URL is: " + baseUrl);
-        driver.get(baseUrl);
     }
 
     @Given("^I am on the shop website$")
@@ -51,10 +51,8 @@ public class Stepdefs {
         productPage.addToCart();
         CartSummaryPage cartSummaryPage = productPage.proceedToCheckout();
         AuthenticationPage authenticationPage = cartSummaryPage.proceedToCheckout();
-        JSONObject user = configReader.getValue("user");
-        String email = (String)user.get("email");
-        String password = (String)user.get("password");
-        AddressesPage addressesPage = authenticationPage.signIn(email, password);
+        User user = User.getUser();
+        AddressesPage addressesPage = authenticationPage.signIn(user.email(), user.password());
         ShippingPage shippingPage = addressesPage.proceedToCheckout();
         shippingPage.agreeToTerms();
         PaymentPage paymentPage = shippingPage.proceedToCheckout();
@@ -67,9 +65,39 @@ public class Stepdefs {
     @Then("^I should see the order in my order history$")
     public void i_should_see_the_order_in_my_order_history() throws Exception {
         OrderHistoryPage orderHistoryPage = new OrderHistoryPage(driver, baseUrl);
-//        This step does not need to test navigation, so going directly to the URL will save time.
+//        This step does not need to test navigation, so going directly to the URL will saveWithoutChangingPassword time.
         orderHistoryPage.open();
         Assert.assertTrue(String.format("Order %s does not exist in history.", orderReference), orderHistoryPage.orderExists(orderReference));
+    }
+
+    @Given("^I am signed into the shop website$")
+    public void i_am_signed_into_the_shop_website() throws Exception {
+        SignInPage signInPage = new SignInPage(driver, baseUrl);
+        signInPage.open();
+        // TODO: implement dependency injection so that the personal information page returned by the next line can be passed to the next step.
+        User user = User.getUser();
+        signInPage.signIn(user.email(), user.password());
+    }
+
+    @When("^I update my first name$")
+    public void i_update_my_first_name() throws Exception {
+        User user = User.getUser();
+        user.updateFirstName();
+        MyAccountPage myAccountPage = new MyAccountPage(driver);
+        PersonalInformationPage personalInformationPage = myAccountPage.goToPersonalInformation();
+        personalInformationPage.updateFirstName(user.firstName());
+        // Store the last name on the user object if we don't already have it.
+        if (user.lastName() == null) {
+            user.setLastName(personalInformationPage.lastName());
+        }
+        personalInformationPage.saveWithoutChangingPassword();
+    }
+
+    @Then("^I should see my updated first name in the header bar$")
+    public void i_should_see_my_updated_name_in_the_header_bar() throws Exception {
+        MyAccountPage myAccountPage = new MyAccountPage(driver);
+        Assert.assertEquals("Mismatched name:", User.getUser().fullName(), myAccountPage.fullName());
+        throw new PendingException();
     }
 
     @After()

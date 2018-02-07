@@ -8,6 +8,7 @@ public class OpenablePage extends BasePage {
     protected String url;
 
     public OpenablePage(WebDriver driver, String baseUrl, String path) {
+        // TODO: fail gracefully when the page requires the user to be logged in before opening.
         super(driver);
         this.driver = driver;
         this.baseUrl = baseUrl;
