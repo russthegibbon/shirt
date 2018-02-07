@@ -10,6 +10,9 @@
 * Log will be created in the working directory, as `logging.out`
 * To exclude a scenario or feature from the run, tag it @ignore
 
+## Notes
+* I have deliberately limited assertions to those specifically required by the brief, on the assumption that other scenarios would be added to check other data shown on the website.
+
 ## References
 
 The following resources were used for reference during creation of this project: 

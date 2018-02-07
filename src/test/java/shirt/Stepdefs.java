@@ -24,10 +24,11 @@ public class Stepdefs {
     private String orderReference;
     private final String configPath = "./config.json";
     private final ConfigReader configReader = new ConfigReader(configPath);
-    private Logger log = LogManager.getLogger("com.peppermintspencer");
+    private Logger log;
 
     @Before()
     public void configure() {
+        log = LogManager.getLogger("com.peppermintspencer");
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         JSONObject environment = configReader.getValue("environment");
         String protocol = (String) environment.get("protocol");
@@ -97,7 +98,6 @@ public class Stepdefs {
     public void i_should_see_my_updated_name_in_the_header_bar() throws Exception {
         MyAccountPage myAccountPage = new MyAccountPage(driver);
         Assert.assertEquals("Mismatched name:", User.getUser().fullName(), myAccountPage.fullName());
-        throw new PendingException();
     }
 
     @After()
